@@ -2,7 +2,7 @@ const express = require("express"),
   bodyParser = require("body-parser"),
   blockManager = require("./blockManager");
 
-const { connect, request, makeBlock } = blockManager;
+const { reqNewBlock, reqGetMoney, connect, request, makeBlock } = blockManager;
 
 const PORT = process.env.HTTP_PORT || 12345;
 let TAG_STATE = false;
@@ -24,6 +24,12 @@ app.get("/makeBlock/:group", (req, res) => {
     res.send("Cannot make a block");
 });
 
+app.get("/getBlock/:group", (req, res) => {
+  const { params: { group } } = req;
+  ret = reqGetMoney(group);
+  res.send(`${ret}`);
+});
+
 app.get("/request/:func", (req, res) => {
   const { params: { func } } = req;
   ret = request({type: func, v:1});
@@ -36,7 +42,7 @@ app.get("/nfc/:state", (req, res) => {
   console.log(`call nfc: ${state}, ${TAG_STATE}`);
   if(state == "tag" && TAG_STATE == false){
     console.log(`make block!!!!!, ${TAG_STATE}`);
-    makeBlock('TEST', '1000');
+    makeBlock('1000', '1000');
     TAG_STATE = true;
     setTimeout(() => {
       console.log("NFC Tag clear...");

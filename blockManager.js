@@ -1,7 +1,12 @@
-const WebSocket = require("ws");
+const WebSocket = require("ws"),
+  blockchain = require("./blockchain");
 
+const { newBlock, getMoney } = blockchain;
 const BLOCKCHAIN_NETWORK_ADDR = "ws://18.220.252.229:1234";
 let ws = null;
+
+const reqNewBlock = blk => newBlock(blk);
+const reqGetMoney = group => getMoney(group);
 
 const connect = () => {
   const addr = BLOCKCHAIN_NETWORK_ADDR;
@@ -33,8 +38,14 @@ const handleSocketMessages = ws => {
       const data = JSON.parse(raw_data);
       switch (data.msg){
         case 'chainstats':
-          console.log('CHAINSTATS', data);
-          console.log('rec', data.msg, ': ledger blockheight', data.chainstats.height, 'block', data.blockstats.height);
+          //console.log('CHAINSTATS', data);
+          //console.log('rec', data.msg, ': ledger blockheight', data.chainstats.height, 'block', data.blockstats.height);
+          console.log('get chainstats...');
+          var blk = {
+            id: data.blockstats.height,
+            blockstats: data.blockstats
+          };
+          newBlock(blk);
           break;
         default:
           console.log('MESSAGE', data);
@@ -63,6 +74,8 @@ const makeBlock = (group, money) => {
 
 
 module.exports = {
+  reqNewBlock,
+  reqGetMoney,
   connect,
   request,
   makeBlock
