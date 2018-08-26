@@ -7,6 +7,6 @@
     "ws": "^6.0.0"
   },
   "scripts": {
-    "dev": "nodemon server.js"
+    "dev": "nodemon control/server.js"
   }
 }
