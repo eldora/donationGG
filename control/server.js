@@ -8,7 +8,13 @@ const PORT = process.env.HTTP_PORT || 12345;
 let TAG_STATE = false;
 
 const app = express();
+const router = require("../kiosk/main")(app);
+
 app.use(bodyParser.json());
+app.set('views', __dirname + '/../kiosk/');
+app.set('view engine', 'ejs');
+app.engine('html', require('ejs').renderFile);
+app.use(express.static('kiosk'));
 
 app.get("/makeBlock", (req, res) => {
   const { query: { group, money} } = req;
