@@ -5,6 +5,7 @@ const express = require("express"),
 const { connect, request, makeBlock } = blockManager;
 
 const PORT = process.env.HTTP_PORT || 12345;
+let TAG_STATE = false;
 
 const app = express();
 app.use(bodyParser.json());
@@ -27,6 +28,25 @@ app.get("/request/:func", (req, res) => {
   const { params: { func } } = req;
   ret = request({type: func, v:1});
   res.send(`result: ${ret}`);
+});
+
+app.get("/nfc/:state", (req, res) => {
+  const { params: { state } } = req;
+
+  console.log(`call nfc: ${state}, ${TAG_STATE}`);
+  if(state == "tag" && TAG_STATE == false){
+    console.log(`make block!!!!!, ${TAG_STATE}`);
+    makeBlock('TEST', '1000');
+    TAG_STATE = true;
+    setTimeout(() => {
+      console.log("NFC Tag clear...");
+      TAG_STATE = false;
+    }, 5000);
+  }
+  else if(state == "clear")
+    TAG_STATE = false;
+
+  res.send(`${state}`);
 });
 
 const server = app.listen(PORT, () =>

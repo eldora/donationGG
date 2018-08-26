@@ -3,15 +3,6 @@ const WebSocket = require("ws");
 const BLOCKCHAIN_NETWORK_ADDR = "ws://18.220.252.229:1234";
 let ws = null;
 
-const parseData = data => {
-  try {
-    return JSON.parse(data);
-  } catch (e) {
-    console.log(e);
-    return null;
-  }
-};
-
 const connect = () => {
   const addr = BLOCKCHAIN_NETWORK_ADDR;
 
@@ -37,10 +28,19 @@ const handleSocketClose = ws => {
 };
 
 const handleSocketMessages = ws => {
-  ws.on("message", data => {
+  ws.on("message", raw_data => {
     try {
-      const msg = JSON.parse(data);
-      console.log('MESSAGE', msg);
+      const data = JSON.parse(raw_data);
+      switch (data.msg){
+        case 'chainstats':
+          console.log('CHAINSTATS', data);
+          console.log('rec', data.msg, ': ledger blockheight', data.chainstats.height, 'block', data.blockstats.height);
+          break;
+        default:
+          console.log('MESSAGE', data);
+          break;
+      }
+      console.log('=====================');
     }
     catch(e){
       console.log('ERROR', e);
@@ -58,7 +58,7 @@ const request = query => {
 
 const makeBlock = (group, money) => {
   const query = {type: "transfer", name: group, user: money, v: 1};
-  return reqeust(query);
+  return request(query);
 };
 
 
