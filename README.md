@@ -12,6 +12,7 @@ sudo docker-compose -f single-peer-ca.yaml up
 ### run marbles
 ```
 cd marbles.v2
+npm install gulp
 gulp
 ```
 
