@@ -10,6 +10,20 @@ let TAG_STATE = false;
 const app = express();
 app.use(bodyParser.json());
 
+app.get("/makeBlock", (req, res) => {
+  const { query: { group, money} } = req;
+  const date = Date();
+
+  console.log(`make Block: ${date}`);
+  ret = makeBlock(group, money);
+
+  if(ret)
+    res.send(`Make a block: ${group}, ${date}`);
+  else
+    res.send("Cannot make a block");
+
+});
+
 app.get("/makeBlock/:group", (req, res) => {
   const { params: { group } } = req;
   const money = 1000;
