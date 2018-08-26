@@ -140,6 +140,7 @@ require('cf-deployment-tracker-client').track();		//reports back to us, this hel
 // ============================================================================================================================
 var part1 = require('./utils/ws_part1');														//websocket message processing for part 1
 var part2 = require('./utils/ws_part2');														//websocket message processing for part 2
+var blocks = require('./utils/ws_blocks');														//websocket message processing for blocks
 var ws = require('ws');																			//websocket mod
 var wss = {};
 var Ibc1 = require('ibm-blockchain-js');														//rest based SDK for ibm blockchain
@@ -248,6 +249,7 @@ ibc.load(options, function (err, cc){														//parse/load chaincode, respo
 		chaincode = cc;
 		part1.setup(ibc, cc);																//pass the cc obj to part 1 node code
 		part2.setup(ibc, cc);																//pass the cc obj to part 2 node code
+		blocks.setup(ibc, cc);																//pass the cc obj to blocks node code
 
 		// ---- To Deploy or Not to Deploy ---- //
 		if(!cc.details.deployed_name || cc.details.deployed_name === ''){					//yes, go deploy
@@ -323,6 +325,7 @@ function cb_deployed(e){
 					var data = JSON.parse(message);
 					part1.process_msg(ws, data);											//pass the websocket msg to part 1 processing
 					part2.process_msg(ws, data);											//pass the websocket msg to part 2 processing
+					blocks.process_msg(ws, data);											//pass the websocket msg to blocks processing
 				}
 				catch(e){
 					console.log('ws message error', e);

@@ -8,7 +8,8 @@ $(document).on('ready', function() {
 		move_on_down();
 	}, 2000);
 
-	var clicked = false;
+	//var clicked = false;
+	var clicked = true;
 	$(document).on('click', '.block', function(event){
 		clicked = !clicked;
 		show_details(event, Number($(this).html()));
@@ -19,12 +20,13 @@ $(document).on('ready', function() {
 	});
 	
 	$(document).on('mouseleave', '#blockWrap', function(){
-		if(!clicked) $('#details').fadeOut();
+		//if(!clicked) $('#details').fadeOut();
 	});
 });
 
 function show_details(event, id){								//build the block details html
-	var left = event.pageX - $('#details').parent().offset().left - 50;
+    var left = 0;
+	//var left = event.pageX - $('#details').parent().offset().left - 50;
 	if(left < 0) left = 0;
 	var ccid = formatCCID(blocks[id].blockstats.transactions[0].type, blocks[id].blockstats.transactions[0].uuid, atob(blocks[id].blockstats.transactions[0].chaincodeID));
 	var payload = atob(blocks[id].blockstats.transactions[0].payload);
@@ -56,9 +58,27 @@ function new_block(newblck){									//rec a new block
 	}
 }
 
+function new_block2(newblck){									//rec a new block
+	if(!blocks[Number(newblck.id)]){
+		for(var last in blocks);								//find the id of the last known block
+		if(!last) last = 0;
+		last++;
+		//console.log('last', last, Number(newblck.id));
+		if(block > 0){											//never fake blocks on an initial load
+			for(var i=last; i < Number(newblck.id); i++){		//build fake blocks for ones we missed out on
+				console.log('run?');
+				blocks[Number(i)] = newblck;
+				build_block(i);
+			}
+		}
+		blocks[Number(newblck.id)] = newblck;
+		build_block(newblck.id);								//build block
+	}
+}
+
 function build_block(id){										//build and append the block html
 	$('#blockWrap').append('<div class="block">' +  nDig(id, 3) + '</div>');
-	$('.block:last').animate({opacity: 1, left: (block * 36)}, 600, function(){
+	$('.block:last').animate({opacity: 1, left: (block * 175)}, 600, function(){
 		$('.lastblock').removeClass('lastblock');
 		$('.block:last').addClass('lastblock');
 	});
@@ -68,7 +88,7 @@ function build_block(id){										//build and append the block html
 function move_on_down(){										//move the blocks left
 	if(block > 10){
 		$('.block:first').animate({opacity: 0}, 800, function(){$('.block:first').remove();});
-		$('.block').animate({left: '-=36'}, 800, function(){});
+		$('.block').animate({left: '-=175'}, 800, function(){});
 		block--;
 	}
 }

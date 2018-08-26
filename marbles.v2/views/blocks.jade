@@ -1,0 +1,18 @@
+extends ./template/layout2.jade
+	
+	
+// --------------- Header -------------- //
+block custom_header
+	script(src='/js/blocks.js?v=#{bag.jshash}')
+	script(type='text/javascript').
+		$(document).ready(function(){
+			
+		});
+		
+		
+// --------------- Navigation Bar  -------------- //
+block navpanel
+	include ./template/nav_blocks.jade
+	
+block footer
+	include ./template/blockchain.jade
